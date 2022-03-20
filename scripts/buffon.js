@@ -1,11 +1,12 @@
 // Important global variables
-const buffonCVWIDTH = 600;
+const buffonCVWIDTH = 601;
 const buffonCVHEIGHT = 600;
 var MATCHNUM = 10000;
 var buffonDUR = 0; // ms
 var buffon_running_function = 0;
 var interrupt_buffon = 0;
 var buffon_is_paused = 0;
+var match_spacing = 50
 
 // Create canvas and get its context.
 const buffon_canvas = document.getElementById('buffon-simulation');
@@ -32,8 +33,10 @@ function buffon_reset_canvas() {
     
     // Create circle.
     buffonctx.beginPath();
-    buffonctx.strokeStyle = 'black';
-    buffonctx.arc(buffon_canvas.width/2, buffon_canvas.height/2, RADIUS, 0, 2 * Math.PI);
+    buffonctx.strokeStyle = 'gold';
+    for (let i = 0; i <= (buffonCVWIDTH-1)/match_spacing; i++) {
+        buffonctx.rect(i * match_spacing, 0, 1, buffonCVHEIGHT);
+    }
     buffonctx.stroke();
 }
 
