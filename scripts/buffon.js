@@ -1,7 +1,7 @@
 // Important global variables
 const buffonCVWIDTH = 601;
 const buffonCVHEIGHT = 600;
-var MATCHNUM = 10000;
+var MATCHNUM = 1000;
 var buffonDUR = 0; // ms
 var buffon_running_function = 0;
 var interrupt_buffon = 0;
@@ -48,16 +48,19 @@ function create_match() {
     let px = Math.floor(Math.random() * buffonCVWIDTH);
     let py = Math.floor(Math.random() * buffonCVHEIGHT);
     
-    // Draw corresponding rectangle (which represents a point)
+    // Draw corresponding line of length match_spacing/2
     buffonctx.beginPath();
     buffonctx.strokeStyle = 'red';
-    buffonctx.rect(px, py, 1, 1);
+    let angle = Math.random() * 2 * Math.PI;
+    buffonctx.moveTo(px, py);
+    buffonctx.lineTo(px + match_spacing / 2 * Math.cos(angle), py + match_spacing / 2 * Math.sin(angle));
+    
+    // Check if beggining and ending x coordinates are such that
+    // the match passes through a gold line
+    let xi = px;
+    let xf = px + match_spacing / 2 * Math.cos(angle);
 
-    // Treat it as a point and check if the distance to
-    // the circle's center satisfies the condition of being
-    // inside it.
-    let d_squared = Math.pow(px - buffonCVWIDTH/2, 2) + Math.pow(py - buffonCVHEIGHT/2, 2);
-    if ( d_squared <= Math.pow(RADIUS, 2) ) {
+    if ( Math.floor(xi/match_spacing) != Math.floor(xf/match_spacing) ) {
         buffonctx.strokeStyle = 'green';
         buffonctx.stroke();
         return true;
@@ -102,7 +105,7 @@ async function start_buffon() {
         // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4.
         let ratio = favourable / (i+1);
         cross_p.textContent = `Number of crossing matches: ${favourable}/${i+1}`;
-        buffon_ratio_p.textContent = `Pi estimation: ${4 * ratio}`;
+        buffon_ratio_p.textContent = `Pi estimation: ${1/ratio}`;
         while (buffon_is_paused) {
             await sleep(10);
             if (interrupt_buffon) {
