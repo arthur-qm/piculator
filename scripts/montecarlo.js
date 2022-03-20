@@ -2,7 +2,7 @@
 const CVWIDTH = 600;
 const CVHEIGHT = 600;
 const RADIUS = CVWIDTH/2;
-var POINTNUM = 10000;
+var POINTNUM = 1000;
 var DUR = 0; // ms
 var running_function = 0;
 var interrupt_montecarlo = 0;
