@@ -5,6 +5,7 @@ const RADIUS = CVWIDTH/2
 var POINTNUM = 10000
 var DUR = 0 // ms
 var running_function = 0
+var interrupt_montecarlo = 0
 
 // Create canvas and get its context.
 const canvas = document.getElementById('montecarlo-simulation');
@@ -18,6 +19,10 @@ var ratio_p = document.getElementById('ratio-montecarlo')
 var tot_points = document.getElementsByName('total-montecarlo')[0]
 tot_points.value = POINTNUM.toString()
 
+function reset_indicators() {
+    ins_p.textContent = 'Inside:'
+    ratio_p.textContent = 'Pi estimation:'
+}
 
 function reset_canvas() {
 
@@ -74,12 +79,23 @@ async function start_montecarlo() {
             favourable++
         }
         await sleep(DUR)
-        // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4
+        // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4.
         let ratio = favourable / (i+1)
         ins_p.textContent = `Inside: ${favourable}/${i+1}`
         ratio_p.textContent = `Pi estimation: ${4 * ratio}`
+        if (interrupt_montecarlo) break;
     }
     running_function = 0
+}
+
+// Stop running the calculation.
+async function reset_montecarlo() {
+    interrupt_montecarlo = 1
+    await sleep(10)
+
+    reset_canvas()
+    reset_indicators()
+    interrupt_montecarlo = 0
 }
 
 reset_canvas();
