@@ -42,15 +42,17 @@ function create_point() {
     ctx.beginPath();
     ctx.strokeStyle = 'red';
     ctx.rect(px, py, 1, 1);
-    ctx.stroke();
 
     // Treat it as a point and check if the distance to
     // the circle's center satisfies the condition of being
     // inside it.
     let d_squared = Math.pow(px - CVWIDTH/2, 2) + Math.pow(py - CVHEIGHT/2, 2);
     if ( d_squared <= Math.pow(RADIUS, 2) ) {
+        ctx.strokeStyle = 'green'
+        ctx.stroke();
         return true;
     } else {
+        ctx.stroke();
         return false;
     }
 }
