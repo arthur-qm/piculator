@@ -10,6 +10,15 @@
 <body>
     <h1>Piculator</h1>
     
+    <h2>Collisions</h2>
+    <canvas id="collision-simulator"></canvas>
+    <a onclick="start_collision()" id="collision-strtbtn">Start</a>
+    <a onclick="reset_collision()">Reset</a>
+    <div>
+        <p id="collision-number">Number of collisions: </p>
+        <p>Number of digits of pi: </p>
+        <input type="text" name="pi-digits">
+    </div>
     <h2>Montecarlo</h2>
     <canvas id="montecarlo-simulation"></canvas>
     <a onclick="start_montecarlo()" id="montecarlo-strtbtn">Start</a>
@@ -33,5 +42,6 @@
     <script src="./scripts/utilities.js"></script>
     <script src="./scripts/montecarlo.js"></script>
     <script src="./scripts/buffon.js"></script>
+    <script src="./scripts/collisions.js"></script>
 </body>
 </html>
