@@ -1,11 +1,15 @@
 // Important global variables
 const colCVWIDTH = 600;
-const colCVHEIGHT = 600;
+const colCVHEIGHT = 200;
 var PIDIG = 1000;
 var colDUR = 0; // ms
 var colrunning_function = 0;
 var interrupt_col = 0;
 var colis_paused = 0;
+var smallsize = 40;
+var bigsize = 80;
+var small_x = 70
+var big_x = 350
 
 // Create canvas and get its context.
 const colcanvas = document.getElementById('collision-simulator');
@@ -30,10 +34,11 @@ function colreset_canvas() {
     // Clear canvas.
     colctx.clearRect(0, 0, colcanvas.width, colcanvas.height);
     
-    // Create circle.
+    // Create the squares.
     colctx.beginPath();
-    colctx.strokeStyle = 'black';
-    colctx.arc(colcanvas.width/2, colcanvas.height/2, RADIUS, 0, 2 * Math.PI);
+    colctx.strokeStyle = 'blue';
+    colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
+    colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
     colctx.stroke();
 }
 
