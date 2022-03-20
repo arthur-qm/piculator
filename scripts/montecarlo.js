@@ -1,11 +1,12 @@
 // Important global variables
-const CVWIDTH = 600
-const CVHEIGHT = 600
-const RADIUS = CVWIDTH/2
-var POINTNUM = 10000
-var DUR = 0 // ms
-var running_function = 0
-var interrupt_montecarlo = 0
+const CVWIDTH = 600;
+const CVHEIGHT = 600;
+const RADIUS = CVWIDTH/2;
+var POINTNUM = 10000;
+var DUR = 0; // ms
+var running_function = 0;
+var interrupt_montecarlo = 0;
+var is_paused = 0;
 
 // Create canvas and get its context.
 const canvas = document.getElementById('montecarlo-simulation');
@@ -14,14 +15,15 @@ canvas.height = CVHEIGHT;
 const ctx = canvas.getContext('2d');
 
 // Get input and output elements
-var ins_p = document.getElementById('inside-montecarlo')
-var ratio_p = document.getElementById('ratio-montecarlo')
-var tot_points = document.getElementsByName('total-montecarlo')[0]
-tot_points.value = POINTNUM.toString()
+var ins_p = document.getElementById('inside-montecarlo');
+var ratio_p = document.getElementById('ratio-montecarlo');
+var tot_points = document.getElementsByName('total-montecarlo')[0];
+var start_btn = document.getElementById('montecarlo-strtbtn');
+tot_points.value = POINTNUM.toString();
 
 function reset_indicators() {
-    ins_p.textContent = 'Inside:'
-    ratio_p.textContent = 'Pi estimation:'
+    ins_p.textContent = 'Inside:';
+    ratio_p.textContent = 'Pi estimation:';
 }
 
 function reset_canvas() {
@@ -54,7 +56,7 @@ function create_point() {
     // inside it.
     let d_squared = Math.pow(px - CVWIDTH/2, 2) + Math.pow(py - CVHEIGHT/2, 2);
     if ( d_squared <= Math.pow(RADIUS, 2) ) {
-        ctx.strokeStyle = 'green'
+        ctx.strokeStyle = 'green';
         ctx.stroke();
         return true;
     } else {
@@ -63,39 +65,79 @@ function create_point() {
     }
 }
 
+// Pauses or unpauses montecarlo
+function montecarlo_pause(state) {
+    if (state) {
+        is_paused = 1;
+        start_btn.textContent = 'Resume';
+        start_btn.setAttribute('onclick', 'montecarlo_pause(0)');
+    } else {
+        is_paused = 0;
+        start_btn.textContent = 'Pause';
+        start_btn.setAttribute('onclick', 'montecarlo_pause(1)');
+    }
+}
+
 // Gets called when the user clicks the button.
 async function start_montecarlo() {
     if (running_function) return;
-    running_function = 1
+    running_function = 1;
+
+    // Transform button into 'pause' button.
+    montecarlo_pause(0);
     
     reset_canvas();
 
-    let favourable = 0
-    let pnum = parseInt(tot_points.value)
+    let favourable = 0;
+    let pnum = parseInt(tot_points.value);
     if ( !isNaN(pnum) && pnum >= 1)
         POINTNUM = pnum
     for (let i = 0; i < POINTNUM; i++) {
         if (create_point()) {
-            favourable++
+            favourable++;
         }
-        await sleep(DUR)
+        await sleep(DUR);
         // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4.
-        let ratio = favourable / (i+1)
-        ins_p.textContent = `Inside: ${favourable}/${i+1}`
-        ratio_p.textContent = `Pi estimation: ${4 * ratio}`
-        if (interrupt_montecarlo) break;
+        let ratio = favourable / (i+1);
+        ins_p.textContent = `Inside: ${favourable}/${i+1}`;
+        ratio_p.textContent = `Pi estimation: ${4 * ratio}`;
+        while (is_paused) {
+            await sleep(10);
+            if (interrupt_montecarlo) {
+                start_btn.textContent = 'Start';
+                start_btn.setAttribute('onclick', 'start_montecarlo()');
+                running_function = 0;
+                return;
+            }
+
+            // Check if it isn't paused anymore and if that's not because
+            // the user reseted.
+            if (!is_paused && !interrupt_montecarlo) {
+                
+                // Transform button into 'pause' button.
+                montecarlo_pause(0);
+            }
+        }
+        if (interrupt_montecarlo) {
+            start_btn.textContent = 'Start';
+            start_btn.setAttribute('onclick', 'start_montecarlo()');
+            running_function = 0;
+            return;
+        }
     }
-    running_function = 0
+    running_function = 0;
+    start_btn.textContent = 'Restart';
+    start_btn.setAttribute('onclick', 'start_montecarlo()');
 }
 
 // Stop running the calculation.
 async function reset_montecarlo() {
-    interrupt_montecarlo = 1
-    await sleep(10)
+    interrupt_montecarlo = 1;
+    await sleep(10);
 
-    reset_canvas()
-    reset_indicators()
-    interrupt_montecarlo = 0
+    reset_canvas();
+    reset_indicators();
+    interrupt_montecarlo = 0;
 }
 
 reset_canvas();
