@@ -1,10 +1,20 @@
+// Important global variables
+const CVWIDTH = 600
+const CVHEIGHT = 600
+const RADIUS = CVWIDTH/2
+var POINTNUM = 10000
+var running_function = 0
 
 // Create canvas and get its context.
 const canvas = document.getElementById('montecarlo-simulation');
-canvas.width = 600;
-canvas.height = 600;
+canvas.width = CVWIDTH;
+canvas.height = CVHEIGHT;
 const ctx = canvas.getContext('2d');
-var radius = canvas.width/2
+
+// Get input and output elements
+var ins_p = document.getElementById('inside-montecarlo')
+var ratio_p = document.getElementById('ratio-montecarlo')
+
 
 function reset_canvas() {
 
@@ -13,7 +23,8 @@ function reset_canvas() {
     
     // Create circle.
     ctx.beginPath();
-    ctx.arc(canvas.width/2, canvas.height/2, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'black';
+    ctx.arc(canvas.width/2, canvas.height/2, RADIUS, 0, 2 * Math.PI);
     ctx.stroke();
 }
 
@@ -22,8 +33,8 @@ function create_point() {
 
     // px and py are integers from 0 to canvas.width
     // (or height) minus 1 pixel
-    let px = Math.floor(Math.random() * canvas.width);
-    let py = Math.floor(Math.random() * canvas.height);
+    let px = Math.floor(Math.random() * CVWIDTH);
+    let py = Math.floor(Math.random() * CVHEIGHT);
     
     // Draw corresponding rectangle (which represents a point)
     ctx.beginPath();
@@ -34,8 +45,8 @@ function create_point() {
     // Treat it as a point and check if the distance to
     // the circle's center satisfies the condition of being
     // inside it.
-    let d_squared = Math.pow(px - canvas.width/2, 2) + Math.pow(py - canvas.height/2, 2);
-    if ( d_squared <= Math.pow(radius, 2) ) {
+    let d_squared = Math.pow(px - CVWIDTH/2, 2) + Math.pow(py - CVHEIGHT/2, 2);
+    if ( d_squared <= Math.pow(RADIUS, 2) ) {
         return true;
     } else {
         return false;
@@ -43,9 +54,24 @@ function create_point() {
 }
 
 // Gets called when the user clicks the button.
-function start_montecarlo() {
+async function start_montecarlo() {
+    if (running_function) return;
+    running_function = 1
+    
     reset_canvas();
+
+    let favourable = 0
+    for (let i = 0; i < POINTNUM; i++) {
+        if (create_point()) {
+            favourable++
+        }
+    }
+
+    // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4
+    let ratio = favourable / POINTNUM
+    ins_p.textContent = `Inside: ${favourable}`
+    ratio_p.textContent = `Pi estimation: ${4 * ratio}`
+    running_function = 0
 }
 
 reset_canvas();
-create_point();
