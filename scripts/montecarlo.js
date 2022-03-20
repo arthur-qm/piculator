@@ -14,6 +14,8 @@ const ctx = canvas.getContext('2d');
 // Get input and output elements
 var ins_p = document.getElementById('inside-montecarlo')
 var ratio_p = document.getElementById('ratio-montecarlo')
+var tot_points = document.getElementsByName('total-montecarlo')[0]
+tot_points.value = POINTNUM.toString()
 
 
 function reset_canvas() {
@@ -61,6 +63,9 @@ async function start_montecarlo() {
     reset_canvas();
 
     let favourable = 0
+    let pnum = parseInt(tot_points.value)
+    if ( !isNaN(pnum) && pnum >= 1)
+        POINTNUM = pnum
     for (let i = 0; i < POINTNUM; i++) {
         if (create_point()) {
             favourable++
