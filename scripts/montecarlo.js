@@ -132,12 +132,16 @@ async function start_montecarlo() {
 
 // Stop running the calculation.
 async function reset_montecarlo() {
+    let was_running = running_function;
     interrupt_montecarlo = 1;
     await sleep(10);
 
     reset_canvas();
     reset_indicators();
     interrupt_montecarlo = 0;
+    if (!was_running) {
+        start_btn.textContent = 'Start';
+    }
 }
 
 reset_canvas();
