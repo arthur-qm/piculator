@@ -12,8 +12,10 @@ var INIsmall_x = 250;
 var small_x = INIsmall_x;
 var INIbig_x = 350;
 var big_x = INIbig_x;
-var small_v = 0;
-var big_v = -1;
+var INIsmall_v = 0;
+var small_v = INIsmall_v;
+var INIbig_v = -1;
+var big_v = INIbig_v;
 var small_mass = 1;
 var big_mass = 1;
 
@@ -156,13 +158,10 @@ async function start_collision() {
                 collision_pause(0);
             }
         }
-        colrunning_function = 0;
-        colstart_btn.textContent = 'Restart';
-        colstart_btn.setAttribute('onclick', 'start_collision()');
     }
     colrunning_function = 0;
     colstart_btn.textContent = 'Restart';
-    colstart_btn.setAttribute('onclick', 'start_collision()');
+    colstart_btn.setAttribute('onclick', '(async () => {await reset_collision(); start_collision();})()');
 }
 
 // Stop running the calculation.
@@ -171,11 +170,13 @@ async function reset_collision() {
     interrupt_col = 1;
     await sleep(100);
 
+    small_x = INIsmall_x;
+    big_x = INIbig_x;
+    small_v = INIsmall_v;
+    big_v = INIbig_v;
     colreset_canvas();
     colreset_indicators();
     interrupt_col = 0;
-    small_x = INIsmall_x;
-    big_x = INIbig_x;
     if (!was_running) {
         colstart_btn.textContent = 'Start';
     }
