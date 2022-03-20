@@ -3,6 +3,7 @@ const CVWIDTH = 600
 const CVHEIGHT = 600
 const RADIUS = CVWIDTH/2
 var POINTNUM = 10000
+var DUR = 0 // ms
 var running_function = 0
 
 // Create canvas and get its context.
@@ -72,12 +73,12 @@ async function start_montecarlo() {
         if (create_point()) {
             favourable++
         }
+        await sleep(DUR)
+        // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4
+        let ratio = favourable / (i+1)
+        ins_p.textContent = `Inside: ${favourable}/${i+1}`
+        ratio_p.textContent = `Pi estimation: ${4 * ratio}`
     }
-
-    // By comparing areas, favourable/POINTNUM = pir^2/4r^2 = pi/4
-    let ratio = favourable / POINTNUM
-    ins_p.textContent = `Inside: ${favourable}`
-    ratio_p.textContent = `Pi estimation: ${4 * ratio}`
     running_function = 0
 }
 
