@@ -20,7 +20,18 @@
         <input type="text" name="total-montecarlo">
         <p id="ratio-montecarlo">Pi estimation:</p>
     </div>
+    <h2>Buffon's matches</h2>
+    <canvas id="buffon-simulation"></canvas>
+    <a onclick="start_buffon()" id="buffon-strtbtn">Start</a>
+    <a onclick="reset_buffon()">Reset</a>
+    <div>
+        <p id="matches-cross">Number of crossing matches: </p>
+        <p>Total:</p>
+        <input type="text" name="total-buffon">
+        <p id="ratio-buffon">Pi estimation:</p>
+    </div>
     <script src="./scripts/utilities.js"></script>
     <script src="./scripts/montecarlo.js"></script>
+    <script src="./scripts/buffon.js"></script>
 </body>
 </html>
