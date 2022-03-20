@@ -1,7 +1,7 @@
 // Important global variables
 const colCVWIDTH = 600;
 const colCVHEIGHT = 100;
-var PIDIG = 0;
+var PIDIG = 1;
 var colDUR = 10; // ms
 var colrunning_function = 0;
 var interrupt_col = 0;
@@ -50,31 +50,33 @@ function colreset_canvas() {
     colctx.stroke();
 }
 
-// Creates point at random coordinates.
-function colcreate_point() {
-
-    // px and py are integers from 0 to canvas.width
-    // (or height) minus 1 pixel
-    let px = Math.floor(Math.random() * colCVWIDTH);
-    let py = Math.floor(Math.random() * colCVHEIGHT);
-    
-    // Draw corresponding rectangle (which represents a point)
-    colctx.beginPath();
-    ctx.strokeStyle = 'red';
-    colctx.rect(px, py, 1, 1);
-
-    // Treat it as a point and check if the distance to
-    // the circle's center satisfies the condition of being
-    // inside it.
-    let d_squared = Math.pow(px - colCVWIDTH/2, 2) + Math.pow(py - colCVHEIGHT/2, 2);
-    if ( d_squared <= Math.pow(RADIUS, 2) ) {
-        colctx.strokeStyle = 'green';
+function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
+    // what is dt such that dt * left_speed = 1pixel
+    // dt = 1pixel / left_speed
+    // theres also 1pixel / right_speed so we pick the lower one and calculate how many
+    // times they fit in time
+    let dt = Math.min(1/left_speed, 1/right_speed);
+    let num = Math.floor(time/dt);
+    for (let i = 1; i < num; i++) {
+        await sleep(dt)
+        colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
+        colctx.clearRect(big_x-1, colCVHEIGHT - bigsize -1, bigsize+2, bigsize+2);
+        small_x += left_speed * dt
+        big_x += right_speed * dt
+        colctx.beginPath();
+        colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
+        colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
         colctx.stroke();
-        return true;
-    } else {
-        colctx.stroke();
-        return false;
     }
+    await sleep(time - dt * num)
+    colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
+    colctx.clearRect(big_x-1, colCVHEIGHT - bigsize -1, bigsize+2, bigsize+2);
+    small_x = left_x + left_speed * time;
+    big_x = right_x + right_speed * time;
+    colctx.beginPath();
+    colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
+    colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
+    colctx.stroke();
 }
 
 // Pauses or unpauses montecarlo
@@ -131,16 +133,17 @@ async function start_collision() {
             colratio_p.textContent = `Pi estimation: ${favourable / Math.pow(10, PIDIG)}`;
             // alert(`${small_v} ${big_v}`);
         }
-        // colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
-        // colctx.clearRect(big_x-1, colCVHEIGHT - bigsize -1, bigsize+2, bigsize+2);
+        colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
+        colctx.clearRect(big_x-1, colCVHEIGHT - bigsize -1, bigsize+2, bigsize+2);
         // colctx.stroke();
-        colreset_canvas();
+        // colreset_canvas();
         small_x += small_v;
         big_x += big_v;
         colctx.strokeStyle = 'blue'
+        colctx.beginPath();
         colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
         colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
-        
+        colctx.stroke()
         while (colis_paused) {
             await sleep(10);
             if (interrupt_col) {
