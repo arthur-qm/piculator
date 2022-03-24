@@ -1,5 +1,6 @@
 async function deal_with_size() {
-    if (window.innerWidth < 650) {
+    let window_width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    if (window_width < 650) {
         CVWIDTH = 300;
         CVHEIGHT = 300;
         RADIUS = CVWIDTH/2;
