@@ -1,6 +1,6 @@
 // Important global variables
-const colCVWIDTH = 600;
-const colCVHEIGHT = 100;
+var colCVWIDTH = 600;
+var colCVHEIGHT = 100;
 var PIDIG = 2;
 var colDUR = 10; // ms
 var colrunning_function = 0;

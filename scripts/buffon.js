@@ -1,6 +1,6 @@
 // Important global variables
-const buffonCVWIDTH = 601;
-const buffonCVHEIGHT = 600;
+var buffonCVWIDTH = 601;
+var buffonCVHEIGHT = 600;
 var MATCHNUM = 1000;
 var buffonDUR = 0; // ms
 var buffon_running_function = 0;

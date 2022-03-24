@@ -1,7 +1,7 @@
 // Important global variables
-const CVWIDTH = 600;
-const CVHEIGHT = 600;
-const RADIUS = CVWIDTH/2;
+var CVWIDTH = 600;
+var CVHEIGHT = 600;
+var RADIUS = CVWIDTH/2;
 var POINTNUM = 1000;
 var DUR = 0; // ms
 var running_function = 0;
