@@ -5,6 +5,7 @@ canvas {
     display: block;
     padding-left: 0;
     padding-right: 0;
+    background-color: rgb(212, 255, 223);
 }
 
 body {
@@ -29,6 +30,10 @@ h1, h2 {
 
 .buttons {
     display: flex;
+}
+
+p {
+    font-weight: 600;
 }
 
 a {
