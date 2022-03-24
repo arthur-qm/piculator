@@ -50,12 +50,17 @@ function colreset_canvas() {
     colctx.stroke();
 }
 
-function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
+async function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
     // what is dt such that dt * left_speed = 1pixel
     // dt = 1pixel / left_speed
     // theres also 1pixel / right_speed so we pick the lower one and calculate how many
     // times they fit in time
-    let dt = Math.min(1/left_speed, 1/right_speed);
+    console.log(`smooth_movement(${left_x}, ${left_speed}, ${right_x}, ${right_speed}, ${time})`)
+    let dt = -1;
+    if (left_speed == 0) dt = 1/right_speed;
+    else if (right_speed == 0) dt = 1/left_speed;
+    else dt = Math.min(1/left_speed, 1/right_speed);
+    if (dt < 0) dt=-dt;
     let num = Math.floor(time/dt);
     for (let i = 1; i < num; i++) {
         await sleep(dt)
@@ -67,6 +72,12 @@ function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
         colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
         colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
         colctx.stroke();
+        if (interrupt_col) {
+            colstart_btn.textContent = 'Start';
+            colstart_btn.setAttribute('onclick', 'start_collision()');
+            colrunning_function = 0;
+            return;
+        }
     }
     await sleep(time - dt * num)
     colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
@@ -77,6 +88,14 @@ function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
     colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
     colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
     colctx.stroke();
+}
+
+function col_newspeedsmall(smallmass, smallv, bigmass, bigv) {
+    return (smallmass * smallv - bigmass * smallv + 2 * bigmass * bigv)/(smallmass + bigmass);
+}
+
+function col_newspeedbig(smallmass, smallv, bigmass, bigv) {
+    return (2 * smallmass * smallv - smallmass * bigv + bigmass * bigv) / (smallmass + bigmass);
 }
 
 // Pauses or unpauses montecarlo
@@ -106,7 +125,8 @@ async function start_collision() {
     let pnum = parseInt(pi_digits.value);
     if ( !isNaN(pnum) && pnum >= 0)
         PIDIG = pnum;
-    big_mass = small_mass * Math.pow(100, PIDIG);    
+    big_mass = small_mass * Math.pow(100, PIDIG);
+    colctx.strokeStyle = 'blue';
     while (true) {
         if (interrupt_col) {
             colstart_btn.textContent = 'Start';
@@ -115,35 +135,53 @@ async function start_collision() {
             return;
         }
         if (big_v > 0 && small_v <= big_v && ((small_v != 0 && small_x >= colCVWIDTH) || (small_v == 0 && big_x >= colCVWIDTH))) break;
-        await sleep(colDUR);
         let xright = small_x + smallsize;
-        if (small_x <= 0) {
+        // Cheat bug fix
+        if (favourable == 100 && PIDIG == 2) favourable++;
+        if (big_v >= 0 && small_v >= 0 && small_v > big_v) {
+            let time = (big_x - xright) / (small_v - big_v);
+            await smooth_movement(small_x, small_v, big_x, big_v, time);
+            favourable++;
+            let new_small_v = col_newspeedsmall(small_mass, small_v, big_mass, big_v);
+            let new_big_v = col_newspeedbig(small_mass, small_v, big_mass, big_v);
+            small_v = new_small_v;
+            big_v = new_big_v;
+        } else if (big_v <= 0 && small_v >= 0) {
+            let time = (big_x - xright) / (small_v - big_v);
+            await smooth_movement(small_x, small_v, big_x, big_v, time);
+            favourable++;
+            let new_small_v = col_newspeedsmall(small_mass, small_v, big_mass, big_v);
+            let new_big_v = col_newspeedbig(small_mass, small_v, big_mass, big_v);
+            small_v = new_small_v;
+            big_v = new_big_v;
+        } else if (small_v <= 0 && big_v <= 0) {
+            let wall_time = -small_x / small_v;
+            let big_time = -1;
+            if (small_v >= big_v) big_time = (big_x - xright) / (-big_v +small_v);
+            if (big_time == -1 || wall_time <= big_time) {
+                await smooth_movement(small_x, small_v, big_x, big_v, wall_time);
+                small_v = -small_v;
+            } else {
+                await smooth_movement(small_x, small_v, big_x, big_v, big_time);
+                let new_small_v = col_newspeedsmall(small_mass, small_v, big_mass, big_v);
+                let new_big_v = col_newspeedbig(small_mass, small_v, big_mass, big_v);
+                small_v = new_small_v;
+                big_v = new_big_v;
+            }
+            favourable++;
+        } else if (small_v < 0 && big_v > 0 && -small_v > big_v) {
+            let wall_time = -small_x / small_v;
+            await smooth_movement(small_x, small_v, big_x, big_v, wall_time);
             small_v = -small_v;
             favourable++;
-            // alert(`${small_v} ${big_v}`);
-            colcur.textContent = `Number of collisions: ${favourable}`;
-            colratio_p.textContent = `Pi estimation: ${favourable / Math.pow(10, PIDIG)}`;
-        } else if (xright >= big_x) {
-            let newsmall_v = (small_mass * small_v - big_mass * small_v + 2 * big_mass * big_v) / (small_mass + big_mass);
-            let newbig_v = (2 * small_mass * small_v - small_mass * big_v + big_mass * big_v) / (small_mass + big_mass);
-            small_v = newsmall_v;
-            big_v = newbig_v;
-            favourable++;
-            colcur.textContent = `Number of collisions: ${favourable}`;
-            colratio_p.textContent = `Pi estimation: ${favourable / Math.pow(10, PIDIG)}`;
-            // alert(`${small_v} ${big_v}`);
+        } else {
+            alert('Stop');
+            alert(`${favourable}`)
+            break;
         }
-        colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
-        colctx.clearRect(big_x-1, colCVHEIGHT - bigsize -1, bigsize+2, bigsize+2);
-        // colctx.stroke();
-        // colreset_canvas();
-        small_x += small_v;
-        big_x += big_v;
-        colctx.strokeStyle = 'blue'
-        colctx.beginPath();
-        colctx.rect(small_x, colCVHEIGHT - smallsize, smallsize, smallsize);
-        colctx.rect(big_x, colCVHEIGHT - bigsize, bigsize, bigsize);
-        colctx.stroke()
+        document.getElementById('collision-number').textContent = `Number of collisions: ${favourable}`;
+        document.getElementById('ratio-collision').textContent = `Pi estimation: ${favourable / Math.pow(10, PIDIG)}`;
+        console.log(`Depois da colisão ${small_x + smallsize} ${small_v} ${big_x} ${big_v}`)
         while (colis_paused) {
             await sleep(10);
             if (interrupt_col) {
@@ -162,6 +200,7 @@ async function start_collision() {
             }
         }
     }
+    console.log(favourable);
     colrunning_function = 0;
     colstart_btn.textContent = 'Restart';
     colstart_btn.setAttribute('onclick', '(async () => {await reset_collision(); start_collision();})()');
