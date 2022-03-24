@@ -52,3 +52,11 @@ a:hover {
     background-color: rgb(119, 170, 172);
     transition: color 0.8s, border 0.8s, background-color 0.8s;
 }
+
+div p:nth-of-type(2) {
+    display: inline;
+}
+
+input {
+    width: 50px;
+}
