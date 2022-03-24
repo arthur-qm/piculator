@@ -75,3 +75,11 @@ input {
     background-color: purple;
     margin-top: 0;
 }
+
+#about {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 18px;
+    text-align: center;
+}
