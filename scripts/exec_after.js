@@ -1,5 +1,9 @@
-async function deal_with_size() {
+async function deal_with_size(is_first_time=0) {
     let window_width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    
+    // Stop mobile phone from resetting when zooms happen
+    if (!is_first_time && window.innerWidth <= 0) return;
+    
     if (window_width < 650) {
         CVWIDTH = 300;
         CVHEIGHT = 300;
@@ -39,4 +43,4 @@ async function deal_with_size() {
 
 window.onresize = deal_with_size;
 
-deal_with_size();
+deal_with_size(1);
