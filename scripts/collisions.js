@@ -1,7 +1,7 @@
 // Important global variables
 const colCVWIDTH = 600;
 const colCVHEIGHT = 100;
-var PIDIG = 1;
+var PIDIG = 2;
 var colDUR = 10; // ms
 var colrunning_function = 0;
 var interrupt_col = 0;
