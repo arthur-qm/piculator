@@ -78,6 +78,23 @@ async function smooth_movement(left_x, left_speed, right_x, right_speed, time) {
             colrunning_function = 0;
             return;
         }
+        while (colis_paused) {
+            await sleep(10);
+            if (interrupt_col) {
+                colstart_btn.textContent = 'Start';
+                colstart_btn.setAttribute('onclick', 'start_collision()');
+                colrunning_function = 0;
+                return;
+            }
+
+            // Check if it isn't paused anymore and if that's not because
+            // the user reseted.
+            if (!colis_paused && !interrupt_col) {
+                
+                // Transform button into 'pause' button.
+                collision_pause(0);
+            }
+        }
     }
     await sleep(time - dt * num)
     colctx.clearRect(small_x - 1, colCVHEIGHT - smallsize - 1, smallsize + 2, smallsize+2);
@@ -175,8 +192,6 @@ async function start_collision() {
             small_v = -small_v;
             favourable++;
         } else {
-            alert('Stop');
-            alert(`${favourable}`)
             break;
         }
         document.getElementById('collision-number').textContent = `Number of collisions: ${favourable}`;
