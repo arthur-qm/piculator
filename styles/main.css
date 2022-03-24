@@ -8,7 +8,7 @@ canvas {
 }
 
 body {
-    background-color: rgb(193, 224, 255);
+    background-color: rgb(203, 214, 233);
 }
 
 h1, h2 {
@@ -27,6 +27,23 @@ h1, h2 {
     text-align: center;
 }
 
-a {
+.buttons {
     display: flex;
+}
+
+a {
+    flex-direction: row;
+    margin-top: 4px;
+    margin-right: 4px;
+    border: 1px solid black;
+    padding: 4px;
+    user-select: none;
+    transition: color 0.8s, border 0.8s, background-color 0.8s;
+}
+
+a:hover {
+    color: white;
+    border: 1px solid white;
+    background-color: rgb(119, 170, 172);
+    transition: color 0.8s, border 0.8s, background-color 0.8s;
 }
