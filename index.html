@@ -9,42 +9,49 @@
 </head>
 <body>
     <h1>Piculator</h1>
-    <div class="calculator">
-        <h2>Collisions</h2>
-        <canvas id="collision-simulator"></canvas>
-        <a onclick="start_collision()" id="collision-strtbtn">Start</a>
-        <a onclick="reset_collision()">Reset</a>
-        <div>
-            <p id="collision-number">Number of collisions: </p>
-            <p>Number of digits of pi: </p>
-            <input type="text" name="pi-digits">
-            <p id="ratio-collision">Pi estimation:</p>
+    <div class="wrap">
+        <div class="calculator">
+            <h2>Collisions</h2>
+            <canvas id="collision-simulator"></canvas>
+            <a onclick="start_collision()" id="collision-strtbtn">Start</a>
+            <a onclick="reset_collision()">Reset</a>
+            <div>
+                <p id="collision-number">Number of collisions: </p>
+                <p>Number of digits of pi: </p>
+                <input type="text" name="pi-digits">
+                <p id="ratio-collision">Pi estimation:</p>
+            </div>
         </div>
     </div>
-    <div class="calculator">
-        <h2>Montecarlo</h2>
-        <canvas id="montecarlo-simulation"></canvas>
-        <a onclick="start_montecarlo()" id="montecarlo-strtbtn">Start</a>
-        <a onclick="reset_montecarlo()">Reset</a>
-        <div>
-            <p id="inside-montecarlo">Inside:</p>
-            <p>Total:</p>
-            <input type="text" name="total-montecarlo">
-            <p id="ratio-montecarlo">Pi estimation:</p>
+    <div class="wrap">
+        <div class="calculator">
+            <h2>Montecarlo</h2>
+            <canvas id="montecarlo-simulation"></canvas>
+            <a onclick="start_montecarlo()" id="montecarlo-strtbtn">Start</a>
+            <a onclick="reset_montecarlo()">Reset</a>
+            <div>
+                <p id="inside-montecarlo">Inside:</p>
+                <p>Total:</p>
+                <input type="text" name="total-montecarlo">
+                <p id="ratio-montecarlo">Pi estimation:</p>
+            </div>
         </div>
     </div>
-    <div class="calculator">
-        <h2>Buffon's matches</h2>
-        <canvas id="buffon-simulation"></canvas>
-        <a onclick="start_buffon()" id="buffon-strtbtn">Start</a>
-        <a onclick="reset_buffon()">Reset</a>
-        <div>
-            <p id="matches-cross">Number of crossing matches: </p>
-            <p>Total:</p>
-            <input type="text" name="total-buffon">
-            <p id="ratio-buffon">Pi estimation:</p>
+    <div class="wrap">
+        <div class="calculator">
+            <h2>Buffon's matches</h2>
+            <canvas id="buffon-simulation"></canvas>
+            <a onclick="start_buffon()" id="buffon-strtbtn">Start</a>
+            <a onclick="reset_buffon()">Reset</a>
+            <div>
+                <p id="matches-cross">Number of crossing matches: </p>
+                <p>Total:</p>
+                <input type="text" name="total-buffon">
+                <p id="ratio-buffon">Pi estimation:</p>
+            </div>
         </div>
     </div>
+    
     
     <script src="./scripts/utilities.js"></script>
     <script src="./scripts/montecarlo.js"></script>
