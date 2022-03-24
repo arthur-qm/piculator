@@ -15,6 +15,11 @@ body {
 h1, h2 {
     text-align: center;
     letter-spacing: 0.2rem;
+    font-weight: 1000;
+}
+
+h1 {
+    margin-bottom: 7px;
 }
 
 .calculator {
@@ -44,6 +49,7 @@ a {
     padding: 4px;
     user-select: none;
     transition: color 0.8s, border 0.8s, background-color 0.8s;
+    font-weight: 800;
 }
 
 a:hover {
@@ -59,4 +65,13 @@ div p:nth-of-type(2) {
 
 input {
     width: 50px;
+}
+
+.horbar {
+    height: 3px;
+    width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: purple;
+    margin-top: 0;
 }
